@@ -1,0 +1,189 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>루틴판 만들기</title>
+<link rel="manifest" href="manifest.json?v=1"><link rel="apple-touch-icon" href="apple-touch-icon.png?v=1"><meta name="theme-color" content="#ffe3a8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Jua,sans-serif;background:#fbf6ee;color:#3a3a4a;-webkit-tap-highlight-color:transparent}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(#ffe8b8,#fff3da);padding:10px 14px 8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+header h1{margin:0 0 8px;font-size:22px;font-weight:400;display:flex;align-items:center;gap:8px}
+header h1 .sp{flex:1}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.tabs button{flex:none;padding:7px 12px;border-radius:14px;background:#fff;font-size:16px;border:2px solid transparent;white-space:nowrap}
+.tabs button.on{border-color:var(--tc,#f0a020);background:#fffaf0}
+.tabs .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:0}
+.wrap{max-width:1180px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}.pvbox{position:static}}
+.wrap>*{min-width:0}
+.panel{background:#fff;border-radius:18px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.lbl{font-size:15px;color:#8a8478;margin:12px 0 6px}.lbl:first-child{margin-top:0}
+.inp{width:100%;padding:10px 12px;border-radius:12px;border:2px solid #eee6da;background:#fffdf9;font-size:18px;outline:none}.inp:focus{border-color:#f0b860}
+.row{display:flex;gap:8px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 11px;border-radius:12px;background:#f5f0e8;font-size:17px;border:2px solid transparent}
+.chip.on{background:#fff4de;border-color:#f0a020}
+.sw{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #e8e1d6}
+.sw.on{box-shadow:0 0 0 3px #3a3a4a}
+.it{display:flex;gap:6px;align-items:center;margin-bottom:6px;background:#fffdf9;border:2px solid #f1ebe1;border-radius:14px;padding:5px}
+.it .no{flex:none;width:22px;text-align:center;color:#b0a898;font-size:14px}
+.it .eb{flex:none;width:46px;height:46px;border-radius:12px;background:#fff6e4;font-size:28px;line-height:46px;text-align:center;border:2px dashed #f1d9a8}
+.it .inp{padding:8px 10px;font-size:17px}
+.it .mv{flex:none;display:flex;flex-direction:column}
+.it .mv button{width:30px;height:22px;font-size:13px;color:#8a8478;border-radius:6px;background:#f5f0e8;margin:1px 0}
+.it .del{flex:none;width:32px;height:32px;border-radius:10px;background:#fdecec;color:#d65a5a;font-size:16px}
+.add{width:100%;padding:11px;border-radius:14px;background:#eaf7f0;color:#2f8f6a;font-size:18px;margin-top:4px}
+.btn{width:100%;padding:13px;border-radius:16px;font-size:19px;margin-top:8px}
+.btn.p{background:#f0a020;color:#fff;box-shadow:0 3px 0 #d0861a}
+.btn.s{background:#f5f0e8}
+.btn.d{background:#fdecec;color:#d65a5a;font-size:16px;padding:10px}
+.note{font-size:14px;color:#9a9488;line-height:1.5}
+.tg{display:flex;background:#f5f0e8;border-radius:14px;padding:4px}.tg button{flex:1;padding:9px 4px;border-radius:11px;font-size:16px}.tg button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.pvbox{position:sticky;top:96px}
+.pvwrap{background:#e9e2d6;border-radius:16px;padding:10px;overflow:hidden}
+.pvsc{transform-origin:0 0}
+.pvnote{text-align:center;margin-top:6px}
+/* 이모지 고르기 */
+#ov{position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:20;display:none;align-items:flex-end;justify-content:center}
+#ov.on{display:flex}
+.sheet{background:#fff;width:100%;max-width:560px;max-height:82vh;overflow:auto;border-radius:22px 22px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}
+.sheet h3{margin:0 0 8px;font-weight:400;font-size:20px;display:flex;align-items:center}.sheet h3 .x{margin-left:auto;width:36px;height:36px;border-radius:50%;background:#f5f0e8}
+.eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:4px}
+.eg button{font-size:30px;height:52px;border-radius:12px}.eg button:active,.eg button.on{background:#fff4de}
+.cat{font-size:14px;color:#9a9488;margin:10px 0 4px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#3a3a4a;color:#fff;padding:10px 18px;border-radius:20px;font-size:17px;opacity:0;transition:.25s;pointer-events:none;z-index:30}
+#toast.on{opacity:1}
+
+/* ===== 인쇄되는 판 (mm 단위) ===== */
+.pg{width:297mm;height:210mm;padding:9mm 9mm 8mm;position:relative;overflow:hidden;background:#fff;font-family:Jua,sans-serif;color:#3a3a4a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bd{height:100%;border-radius:9mm;border:2.2mm solid var(--c);background:var(--bg);padding:6mm 7mm;display:flex;flex-direction:column}
+.tt{display:flex;align-items:center;justify-content:center;gap:4mm;font-size:30pt;margin-bottom:5mm;line-height:1.2}.tt .nm{color:var(--c)}
+.tt .nm2{background:#fff;border-radius:7mm;padding:1mm 7mm;border:1.2mm dashed var(--c);min-width:50mm;display:inline-block}
+.gr{flex:1;display:grid;grid-template-columns:24mm repeat(var(--n),1fr);grid-template-rows:auto 1fr 1fr;gap:2.4mm;min-height:0}
+.cd{background:#fff;border-radius:5mm;border:.9mm solid #e3e0da;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3mm 1mm 2.5mm;min-height:52mm;position:relative}
+.cd .no{position:absolute;top:1.5mm;left:2.5mm;font-size:11pt;color:#fff;background:var(--c);border-radius:50%;width:6mm;height:6mm;line-height:6.4mm;text-align:center}
+.cd .em{font-size:var(--es);line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.cd .lb{font-size:var(--ls);margin-top:3mm;text-align:center;line-height:1.15;word-break:keep-all}
+.rl{display:flex;align-items:center;justify-content:center;text-align:center;font-size:15pt;border-radius:5mm;line-height:1.2}
+.rl.a{background:#fff;color:#888;border:.9mm solid #e3e0da}.rl.b{background:var(--c);color:#fff}
+.sp{background:rgba(255,255,255,.75);border-radius:5mm;display:flex;align-items:center;justify-content:center}
+.sp i{width:21mm;height:21mm;border-radius:50%;border:.7mm dashed #c9c4bb;display:block}.sp.b i{border-color:var(--c);background:#fff}
+.cd.bl{min-height:84mm;justify-content:space-evenly;padding:8mm 2.5mm 3mm}
+.cd.bl .dr{flex:1;width:88%;border-radius:3mm;background:repeating-linear-gradient(45deg,#fff,#fff 3mm,#faf8f4 3mm,#faf8f4 6mm);display:flex;align-items:center;justify-content:center;color:#d8d3cb;font-size:10pt}
+.cd.bl .wl{width:92%;flex:1;max-height:17mm;border-bottom:.6mm dashed #c4beb4}
+.two .tt{font-size:24pt;margin-bottom:3mm}.two .gr+.gr{margin-top:3.5mm;padding-top:3.5mm;border-top:.7mm dashed var(--c)}
+.two .gr{gap:1.8mm}.two .cd,.two .cd.bl{min-height:0;padding:2.5mm 1mm 2mm}.two .cd .lb{margin-top:1.5mm}.two .cd.bl{min-height:44mm;padding-top:6mm}
+.two .sp i{width:16mm;height:16mm}.two .rl{font-size:13pt}
+.ft{position:absolute;bottom:2.5mm;right:12mm;font-size:9pt;color:#b5b0a8}
+#print{display:none}
+@page{size:A4 landscape;margin:0}
+@media print{
+  body{background:#fff}
+  header,.wrap,#ov,#toast{display:none!important}
+  #print{display:block}
+  #print .pg{page-break-after:always;break-after:page}
+  #print .pg:last-child{page-break-after:auto;break-after:auto}
+}
+</style></head><body>
+<header><h1>🧲 루틴판 만들기<span class="sp"></span><button class="chip" id="pall" style="font-size:15px">🖨️ 전부 인쇄</button></h1><div class="tabs" id="tabs"></div></header>
+<div class="wrap">
+  <div class="panel" id="ed"></div>
+  <div class="pvbox"><div class="pvwrap" id="pvw"><div class="pvsc" id="pv"></div></div><div class="note pvnote">미리 보기 · A4 가로로 인쇄돼요</div></div>
+</div>
+<div id="ov"><div class="sheet" id="sh"></div></div>
+<div id="toast"></div>
+<div id="print"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const KEY='routine_board_v1';
+const COLORS=[['#ffb547','#fff4dc'],['#5cc6a0','#e3f7ef'],['#ff8fab','#ffe8ef'],['#6aa8ff','#e6f0ff'],['#b59cf0','#f3eeff'],['#f08a5d','#fff0e8'],['#8cc152','#f0f8e6'],['#4fc3d9','#e4f7fa']];
+const SUNS=['☀️','🌤️','🏡','🌙','⭐','🌈','🌷','🐣','🎈','🍀'];
+const EMO={'아침·씻기':'⏰ 🛏️ 🚽 🫧 🧼 🚿 🛁 🪥 🧴 💇 🪮 🪞 💧 🥛','옷·준비':'👕 👚 👖 👗 🧦 👟 🧥 🧢 🎒 🏫 🚌 🚗 🎽 🩱 ☂️','먹기':'🍚 🍽️ 🥣 🍳 🍞 🍎 🍌 🥕 🥦 🍪 🥤 💊','공부·놀이':'✏️ 📖 📚 📒 📝 🧮 🔤 🎹 🎨 ⚽ 🚲 🧩 🧸 🎮 📺','정리·집안일':'🧹 🧺 🗑️ 🪴 🐶 🐱 🐟 🛋️ 🚪 👞','마음·잠':'🤗 💗 😊 🙏 🌙 😴 🛌 ⭐ 🏆 🎉 💯 ✅'};
+const D=(kid,title,sun,ci,items)=>({id:uid(),kid,title,sun,ci,blank:0,bn:8,items:items.map(([e,t])=>({e,t}))});
+const AM=[['⏰','기상'],['🛏️','이불 정리'],['🫧','씻기'],['👕','옷 입기'],['🍚','아침 식사'],['🪥','양치하기']];
+const PM=[['👟','신발 정리'],['🧼','손 발 씻기'],['🎒','가방 정리'],['👚','옷 정리'],['🧸','방 정리'],['🚿','샤워하기'],['🍽️','저녁 식사'],['🪥','양치하기'],['✏️','숙제하기'],['📖','책 읽기'],['🌙','일찍 자기']];
+function defaults(){return[D('연아','등교 전 루틴','☀️',0,AM.concat([['🏫','등교']])),D('연아','하교 후 루틴','🏡',1,PM),D('연우','등원 전 루틴','☀️',2,AM.concat([['🚌','등원']])),D('연우','하원 후 루틴','🏡',3,PM)]}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!Array.isArray(S.boards)||!S.boards.length)S={boards:defaults(),cur:0};
+const cur=()=>S.boards[Math.min(S.cur,S.boards.length-1)];
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800)}
+
+/* ---------- 판 그리기 ---------- */
+function band(items,blank,off,two){const n=items.length;
+  let h='<div></div>'+(blank?items.map((_,i)=>`<div class="cd bl"><span class="no">${off+i+1}</span>${'<div class="wl"></div>'.repeat(two?3:4)}</div>`).join('')
+    :items.map((it,i)=>`<div class="cd"><span class="no">${off+i+1}</span><div class="em">${esc(it.e)}</div><div class="lb">${esc(it.t)}</div></div>`).join(''));
+  h+='<div class="rl a">할 일</div>'+'<div class="sp"><i></i></div>'.repeat(n);
+  h+='<div class="rl b">다 했어요!</div>'+'<div class="sp b"><i></i></div>'.repeat(n);
+  return `<div class="gr" style="--n:${n}">${h}</div>`}
+function boardHTML(b){
+  const items=b.blank?Array(+b.bn||8).fill({e:'',t:''}):b.items.filter(x=>x.t||x.e);
+  const n=Math.max(items.length,1),two=n>8,k=Math.ceil(n/2),[c,bg]=COLORS[b.ci%COLORS.length];
+  const longest=Math.max(0,...items.map(x=>(x.t||'').length));
+  let es=two?'13mm':n<=6?'20mm':'17mm',ls=two?'14pt':n<=6?'18pt':'15pt';if(longest>6&&!two)ls=n<=6?'16pt':'13.5pt';if(longest>6&&two)ls='12.5pt';
+  const bands=two?band(items.slice(0,k),b.blank,0,1)+band(items.slice(k),b.blank,k,1):band(items,b.blank,0,0);
+  const nm=b.blank||!b.kid?`<span class="nm2">${b.blank?'':esc(b.kid)}&nbsp;</span>`:`<span><span class="nm">${esc(b.kid)}</span>의</span>`;
+  return `<div class="pg ${two?'two':''}" style="--c:${c};--bg:${bg};--es:${es};--ls:${ls}"><div class="bd">
+  <div class="tt"><span>${esc(b.sun)}</span>${nm} ${esc(b.title)}<span>${esc(b.sun)}</span></div>${bands}</div>
+  <div class="ft">자석을 "할 일"에 붙여 두고, 하면 "다 했어요!"로 옮겨요</div></div>`}
+function fit(){const w=$('#pvw').clientWidth-20,pv=$('#pv');const pg=pv.firstElementChild;if(!pg)return;const s=w/pg.offsetWidth;pv.style.transform=`scale(${s})`;pv.style.height=pg.offsetHeight*s+'px';pv.style.width=pg.offsetWidth+'px';$('#pvw').style.height=(pg.offsetHeight*s+20)+'px'}
+function preview(){$('#pv').innerHTML=boardHTML(cur());fit();save()}
+addEventListener('resize',fit);
+
+/* ---------- 편집 ---------- */
+function tabs(){$('#tabs').innerHTML=S.boards.map((b,i)=>`<button class="${i===S.cur?'on':''}" data-tb="${i}" style="--tc:${COLORS[b.ci%COLORS.length][0]}"><span class="dot" style="background:${COLORS[b.ci%COLORS.length][0]}"></span>${esc(b.kid||'이름 없음')} ${esc(b.title)}${b.blank?' ✍️':''}</button>`).join('')+'<button data-tb="new">➕ 새 판</button>';
+  $$('[data-tb]').forEach(x=>x.onclick=()=>{if(x.dataset.tb==='new'){const b=D('','새 루틴','⭐',S.boards.length%COLORS.length,[['⭐','할 일 1'],['⭐','할 일 2'],['⭐','할 일 3']]);S.boards.push(b);S.cur=S.boards.length-1}else S.cur=+x.dataset.tb;render()})}
+function render(){tabs();const b=cur();
+  $('#ed').innerHTML=`
+  <div class="tg"><button class="${b.blank?'':'on'}" data-bl="0">📝 내용 넣은 판</button><button class="${b.blank?'on':''}" data-bl="1">✍️ 아이가 직접 쓰는 판</button></div>
+  <div class="lbl">아이 이름 ${b.blank?'<span class="note">(비워 두면 아이가 직접 써요)</span>':''}</div><input class="inp" id="kid" value="${esc(b.kid)}" placeholder="예: 연아" maxlength="8">
+  <div class="lbl">제목</div><input class="inp" id="ti" value="${esc(b.title)}" placeholder="예: 등교 전 루틴" maxlength="14">
+  <div class="lbl">제목 옆 그림</div><div class="chips">${SUNS.map(s=>`<button class="chip ${b.sun===s?'on':''}" data-sun="${s}">${s}</button>`).join('')}</div>
+  <div class="lbl">색깔</div><div class="chips">${COLORS.map(([c],i)=>`<button class="sw ${b.ci===i?'on':''}" data-ci="${i}" style="background:${c}"></button>`).join('')}</div>
+  ${b.blank?`<div class="lbl">카드 몇 칸?</div><div class="chips">${[4,5,6,7,8,10,12].map(n=>`<button class="chip ${+b.bn===n?'on':''}" data-bn="${n}">${n}칸</button>`).join('')}</div>
+   <div class="note" style="margin-top:8px">카드마다 글씨 줄이 있어요. 아이가 직접 써요.<br>8칸이 넘으면 두 줄로 나뉘어요.</div>`
+  :`<div class="lbl">할 일 <span class="note">(그림을 누르면 바뀌어요 · 8개가 넘으면 두 줄로 나뉘어요)</span></div>
+   <div id="its">${b.items.map((it,i)=>`<div class="it"><span class="no">${i+1}</span><button class="eb" data-em="${i}">${esc(it.e)||'＋'}</button><input class="inp" data-t="${i}" value="${esc(it.t)}" maxlength="12" placeholder="할 일"><div class="mv"><button data-up="${i}">▲</button><button data-dn="${i}">▼</button></div><button class="del" data-del="${i}">✕</button></div>`).join('')}</div>
+   <button class="add" id="add">➕ 할 일 추가</button>`}
+  <button class="btn p" id="pr">🖨️ 이 판 인쇄하기</button>
+  <div class="note" style="margin-top:6px">인쇄 창에서 <b>가로 방향</b>, 배경 그래픽 켜기를 확인해 주세요. "PDF로 저장"도 돼요.<br>코팅하면 자석이 잘 붙어요.</div>
+  <div class="row" style="margin-top:10px"><button class="btn s" id="dup" style="margin:0">📄 이 판 복사</button><button class="btn d" id="dl" style="margin:0;width:auto;flex:none;padding:13px 14px">🗑️ 판 지우기</button></div>
+  <details style="margin-top:12px"><summary class="note">처음 상태로 되돌리기</summary><button class="btn d" id="rs">↩️ 연아·연우 기본 판 4개로 되돌리기</button></details>`;
+  bind();preview()}
+function bind(){const b=cur();
+  $$('[data-bl]').forEach(x=>x.onclick=()=>{b.blank=+x.dataset.bl;if(b.blank&&!b.bn)b.bn=8;render()});
+  $('#kid').oninput=e=>{b.kid=e.target.value;tabs();preview()};
+  $('#ti').oninput=e=>{b.title=e.target.value;tabs();preview()};
+  $$('[data-sun]').forEach(x=>x.onclick=()=>{b.sun=x.dataset.sun;render()});
+  $$('[data-ci]').forEach(x=>x.onclick=()=>{b.ci=+x.dataset.ci;render()});
+  $$('[data-bn]').forEach(x=>x.onclick=()=>{b.bn=+x.dataset.bn;render()});
+  $$('[data-t]').forEach(x=>x.oninput=()=>{b.items[+x.dataset.t].t=x.value;preview()});
+  $$('[data-em]').forEach(x=>x.onclick=()=>pickEmoji(+x.dataset.em));
+  $$('[data-up]').forEach(x=>x.onclick=()=>{const i=+x.dataset.up;if(i>0){[b.items[i-1],b.items[i]]=[b.items[i],b.items[i-1]];render()}});
+  $$('[data-dn]').forEach(x=>x.onclick=()=>{const i=+x.dataset.dn;if(i<b.items.length-1){[b.items[i+1],b.items[i]]=[b.items[i],b.items[i+1]];render()}});
+  $$('[data-del]').forEach(x=>x.onclick=()=>{if(b.items.length<=1){toast('할 일이 하나는 있어야 해요');return}b.items.splice(+x.dataset.del,1);render()});
+  const ad=$('#add');if(ad)ad.onclick=()=>{if(b.items.length>=14){toast('14개까지 넣을 수 있어요');return}b.items.push({e:'⭐',t:''});render();const l=$$('[data-t]').pop();l&&l.focus();pickEmoji(b.items.length-1)};
+  $('#pr').onclick=()=>doPrint([b]);
+  $('#dup').onclick=()=>{const c=JSON.parse(JSON.stringify(b));c.id=uid();c.title+=' (복사)';S.boards.splice(S.cur+1,0,c);S.cur++;render();toast('복사했어요')};
+  const dl=$('#dl');dl.onclick=()=>{if(S.boards.length<=1){toast('판이 하나는 있어야 해요');return}if(!dl.dataset.c){dl.dataset.c=1;dl.textContent='한 번 더!';return}S.boards.splice(S.cur,1);S.cur=Math.max(0,S.cur-1);render();toast('지웠어요')};
+  $('#rs').onclick=()=>{S={boards:defaults(),cur:0};render();toast('처음 상태로 되돌렸어요')};
+}
+function pickEmoji(i){const b=cur();
+  $('#sh').innerHTML=`<h3>그림 고르기<button class="x" id="ox">✕</button></h3>
+  <div class="row"><input class="inp" id="ce" placeholder="직접 넣기 (키보드 이모지)" maxlength="8"><button class="chip" id="cok" style="flex:none">넣기</button></div>
+  ${Object.entries(EMO).map(([k,v])=>`<div class="cat">${k}</div><div class="eg">${v.split(' ').map(e=>`<button class="${b.items[i].e===e?'on':''}" data-pe="${e}">${e}</button>`).join('')}</div>`).join('')}`;
+  $('#ov').classList.add('on');
+  const set=e=>{b.items[i].e=e;$('#ov').classList.remove('on');render()};
+  $$('[data-pe]').forEach(x=>x.onclick=()=>set(x.dataset.pe));
+  $('#cok').onclick=()=>{const v=$('#ce').value.trim();if(v)set(v)};
+  $('#ox').onclick=()=>$('#ov').classList.remove('on')}
+$('#ov').onclick=e=>{if(e.target.id==='ov')$('#ov').classList.remove('on')};
+function doPrint(list){$('#print').innerHTML=list.map(boardHTML).join('');document.fonts.ready.then(()=>setTimeout(()=>window.print(),150))}
+$('#pall').onclick=()=>doPrint(S.boards);
+render();document.fonts&&document.fonts.ready.then(fit);
+</script></body></html>
