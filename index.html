@@ -134,8 +134,8 @@ let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!Array.isArray(S.boards)||!S.boards.length)S={boards:defaults().concat([yuHW()]),cur:0,v:4};
 if(!S.v){S.v=2;if(!S.boards.some(b=>(b.title||'').includes('숙제')))S.boards=S.boards.concat(HW())}
 S.boards.forEach(b=>b.items.forEach(it=>{if(it.t==='바빠 독해')it.t='빠작 독해'}));
-if((S.v||0)<4){S.v=4;if(!S.boards.some(b=>b.items.some(it=>it.sec)))S.boards.push(yuHW())}
 if(S.v<3){S.v=3;const i=S.boards.findIndex(b=>b.kid==='연아'&&b.title==='매일 숙제'&&!b.wk&&b.items[0]&&b.items[0].t==='학교 숙제');if(i>=0)S.boards[i]=yaHW();else if(!S.boards.some(b=>b.wk))S.boards.push(yaHW())}
+if((S.v||0)<4){S.v=4;if(!S.boards.some(b=>b.items.some(it=>it.sec)))S.boards.push(yuHW())}
 const cur=()=>S.boards[Math.min(S.cur,S.boards.length-1)];
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800)}
@@ -240,7 +240,7 @@ function doPrint(list){doPrintH(list.map(viewHTML))}
 function doPrintH(hs){$('#print').innerHTML=hs.join('');document.fonts.ready.then(()=>setTimeout(()=>window.print(),150))}
 $('#pall').onclick=()=>doPrintH(S.boards.flatMap(b=>b.wk&&!b.blank?[weekHTML(b)].concat(DAYS.filter(d=>b.items.some(it=>due(it,d))).map(d=>dayBoard(b,d))):[viewHTML(b)]));
 render();document.fonts&&document.fonts.ready.then(fit);
-const APPVER='20261125e';let verBusy=false;
+const APPVER='20261125f';let verBusy=false;
 async function checkVer(){if(verBusy)return;verBusy=true;try{const r=await fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'});const t=await r.text();const m=t.match(/const APPVER='([^']+)'/);
   if(m&&m[1]!==APPVER&&!$('#ov').classList.contains('on')&&document.activeElement?.tagName!=='INPUT'){location.replace(location.pathname+'?v='+m[1])}}catch(e){}finally{verBusy=false}}
 setTimeout(checkVer,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkVer()});
