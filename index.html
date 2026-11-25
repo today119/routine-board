@@ -35,6 +35,7 @@ header h1 .sp{flex:1}
 .it .mv{flex:none;display:flex;flex-direction:column}
 .it .mv button{width:30px;height:22px;font-size:13px;color:#8a8478;border-radius:6px;background:#f5f0e8;margin:1px 0}
 .dys{display:flex;gap:3px;margin:-2px 0 8px 30px}.dys button{flex:1;padding:4px 0;border-radius:8px;background:#f5f0e8;font-size:14px;color:#9a9488}.dys button.on{background:#ffe4a8;color:#6a4a10}
+.it.sec{background:#f6f2ff;border-color:#ddd2ff}.it.sec .inp{background:#fff}
 .it .del{flex:none;width:32px;height:32px;border-radius:10px;background:#fdecec;color:#d65a5a;font-size:16px}
 .add{width:100%;padding:11px;border-radius:14px;background:#eaf7f0;color:#2f8f6a;font-size:18px;margin-top:4px}
 .btn{width:100%;padding:13px;border-radius:16px;font-size:19px;margin-top:8px}
@@ -85,6 +86,11 @@ header h1 .sp{flex:1}
 .we{font-size:calc(var(--rh)*.62);line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}.wt{flex:1;font-size:13pt;white-space:nowrap;overflow:hidden}.wd{font-size:9pt;color:#9a9488;white-space:nowrap}
 .wc{background:#fff;border-radius:3mm;display:flex;align-items:center;justify-content:center}.wc i{width:var(--cs);height:var(--cs);border-radius:50%;border:.6mm dashed var(--c);display:block}
 .wc.off{background:repeating-linear-gradient(45deg,transparent,transparent 1.5mm,rgba(0,0,0,.035) 1.5mm,rgba(0,0,0,.035) 3mm)}
+.scp .tt{font-size:24pt;margin-bottom:3mm}.sr{flex:1;display:grid;gap:2mm;min-height:0}.sr+.sr{margin-top:3mm}
+.sh{background:var(--c);color:#fff;border-radius:5mm;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16pt;text-align:center;line-height:1.2}.sh .se{font-size:20pt;font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif}
+.scd{background:#fff;border-radius:5mm;border:.9mm solid #e3e0da;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;padding:1.5mm 1mm;min-width:0}
+.scd .em{line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}.scd .lb{font-size:13pt;text-align:center;line-height:1.1;word-break:keep-all}
+.scd .mg{display:flex;align-items:center;gap:1.5mm}.scd .mg i{width:var(--cs);height:var(--cs);border-radius:50%;border:.6mm dashed #c9c4bb;display:block}.scd .mg i.d{border-color:var(--c);background:var(--bg)}.scd .mg b{color:#c9c4bb;font-size:11pt;font-weight:400}
 .ft{position:absolute;bottom:2.5mm;right:12mm;font-size:9pt;color:#b5b0a8}
 #print{display:none}
 @page{size:A4 landscape;margin:0}
@@ -118,12 +124,17 @@ const PM=[['👟','신발 정리'],['🧼','손 발 씻기'],['🎒','가방 정
 const DAYS=['월','화','수','목','금','토','일'];
 const YA_HW=[['📘','구몬',''],['📗','훈민정음','수금토일'],['📖','뿌독 1회',''],['📰','바빠 독해','수토일'],['🧮','수학 숙제',''],['📒','영어 워크북','수토일'],['📱','Quizlet',''],['💻','IXL','토일'],['📜','용선생','토일'],['🔤','초등영문법','토일'],['🧠','단어 외우기','월수금토일'],['📐','디딤돌 2장',''],['📚','원서 읽기','']];
 const yaHW=()=>{const b=D('연아','매일 숙제','✏️',4,YA_HW.map(([e,t])=>[e,t]));b.wk=1;b.pv='week';b.items.forEach((it,i)=>it.days=YA_HW[i][2]);return b};
+const S_=(e,t)=>({e,t,sec:1});
+const yuHW=()=>{const b=D('연우','집공부 루틴','📚',6,[]);b.items=[S_('☀️','하원 후 40분'),{e:'🧸',t:'교구 놀이'},{e:'🧮',t:'수학 워크북'},{e:'🔤',t:'파닉스 워크북'},{e:'📝',t:'한글 워크북'},{e:'👀',t:'사이트워드 읽기'},
+  S_('🌆','저녁 20분'),{e:'➕',t:'연산 놀이'},{e:'📄',t:'종이접기'},{e:'🗣️',t:'어휘 공부'},
+  S_('🌙','자기 전'),{e:'📚',t:'영어 한글 책 30분'}];return b};
 const HW=()=>[yaHW(),D('연우','매일 숙제','✏️',6,[['📝','한글'],['🔢','숫자'],['🔤','영어'],['📖','책 보기']])];
 function defaults(){return[D('연아','등교 전 루틴','☀️',0,AM.concat([['🏫','등교']])),D('연아','하교 후 루틴','🏡',1,PM),D('연우','등원 전 루틴','☀️',2,AM.concat([['🚌','등원']])),D('연우','하원 후 루틴','🏡',3,PM)].concat(HW())}
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!S||!Array.isArray(S.boards)||!S.boards.length)S={boards:defaults(),cur:0,v:3};
+if(!S||!Array.isArray(S.boards)||!S.boards.length)S={boards:defaults().concat([yuHW()]),cur:0,v:4};
 if(!S.v){S.v=2;if(!S.boards.some(b=>(b.title||'').includes('숙제')))S.boards=S.boards.concat(HW())}
 S.boards.forEach(b=>b.items.forEach(it=>{if(it.t==='빠작 독해')it.t='바빠 독해'}));
+if((S.v||0)<4){S.v=4;if(!S.boards.some(b=>b.items.some(it=>it.sec)))S.boards.push(yuHW())}
 if(S.v<3){S.v=3;const i=S.boards.findIndex(b=>b.kid==='연아'&&b.title==='매일 숙제'&&!b.wk&&b.items[0]&&b.items[0].t==='학교 숙제');if(i>=0)S.boards[i]=yaHW();else if(!S.boards.some(b=>b.wk))S.boards.push(yaHW())}
 const cur=()=>S.boards[Math.min(S.cur,S.boards.length-1)];
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -146,7 +157,14 @@ function weekHTML(b){const [c,bg]=COLORS[b.ci%COLORS.length];const L=b.items.fil
   <div class="tt"><span>${esc(b.sun)}</span>${b.kid?`<span><span class="nm">${esc(b.kid)}</span>의</span>`:''} 이번 주 숙제<span>${esc(b.sun)}</span><span class="wdate">____월 ____일 ~ ____월 ____일</span></div>
   <div class="wg">${head}${rows}</div></div><div class="ft">한 숙제는 동그라미에 스티커나 작은 자석을 붙여요</div></div>`}
 function dayBoard(b,d){return boardHTML({...b,wk:0,title:`${d}요일 ${b.title.replace(/^매일\s*/,'')}`,items:b.items.filter(it=>due(it,d))})}
-function viewHTML(b){return b.wk?(b.pv==='week'||!b.pv?weekHTML(b):dayBoard(b,b.pv)):boardHTML(b)}
+function secHTML(b){const [c,bg]=COLORS[b.ci%COLORS.length];const G=[];
+  b.items.filter(x=>x.t||x.e).forEach(it=>{if(it.sec)G.push({h:it,L:[]});else{if(!G.length)G.push({h:{e:'',t:''},L:[]});G[G.length-1].L.push(it)}});
+  const g=G.length||1,mx=Math.max(1,...G.map(x=>x.L.length)),rh=(158-3*(g-1))/g,cs=Math.min(15,rh*0.3).toFixed(1),es=Math.min(16,rh*0.3).toFixed(1);
+  const rows=G.map(({h,L})=>`<div class="sr" style="grid-template-columns:40mm repeat(${mx},1fr)"><div class="sh"><span class="se">${esc(h.e)}</span><span>${esc(h.t)}</span></div>${L.map(it=>`<div class="scd"><div class="em" style="font-size:${es}mm">${esc(it.e)}</div><div class="lb">${esc(it.t)}</div><div class="mg"><i></i><b>➜</b><i class="d"></i></div></div>`).join('')}</div>`).join('');
+  return `<div class="pg scp" style="--c:${c};--bg:${bg};--cs:${cs}mm"><div class="bd"><div class="tt"><span>${esc(b.sun)}</span>${b.kid?`<span><span class="nm">${esc(b.kid)}</span>의</span>`:''} ${esc(b.title)}<span>${esc(b.sun)}</span></div>${rows}</div>
+  <div class="ft">자석을 왼쪽 동그라미에 붙여 두고, 하면 오른쪽(색 동그라미)으로 옮겨요</div></div>`}
+const hasSec=b=>!b.blank&&b.items.some(it=>it.sec);
+function viewHTML(b){if(hasSec(b))return secHTML(b);return b.wk?(b.pv==='week'||!b.pv?weekHTML(b):dayBoard(b,b.pv)):boardHTML(b)}
 function boardHTML(b){
   const items=b.blank?Array(+b.bn||8).fill({e:'',t:''}):b.items.filter(x=>x.t||x.e);
   const n=Math.max(items.length,1),two=n>8,k=Math.ceil(n/2),[c,bg]=COLORS[b.ci%COLORS.length];
@@ -176,8 +194,9 @@ function render(){tabs();const b=cur();
   :`<div class="lbl">할 일 <span class="note">(그림을 누르면 바뀌어요 · 8개가 넘으면 두 줄로 나뉘어요)</span></div>
    <label class="note" style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><input type="checkbox" id="wk" ${b.wk?'checked':''}> 📅 요일마다 하는 일이 달라요 (숙제·학원)</label>
    ${b.wk?`<div class="lbl">미리 보기</div><div class="chips" style="margin-bottom:8px">${['week'].concat(DAYS).map(d=>`<button class="chip ${(b.pv||'week')===d?'on':''}" data-pvd="${d}">${d==='week'?'📅 주간표':d+'요일'}</button>`).join('')}</div>`:''}
-   <div id="its">${b.items.map((it,i)=>`<div class="it"><span class="no">${i+1}</span><button class="eb" data-em="${i}">${esc(it.e)||'＋'}</button><input class="inp" data-t="${i}" value="${esc(it.t)}" maxlength="12" placeholder="할 일"><div class="mv"><button data-up="${i}">▲</button><button data-dn="${i}">▼</button></div><button class="del" data-del="${i}">✕</button></div>${b.wk?`<div class="dys">${DAYS.map(d=>`<button class="${due(it,d)?'on':''}" data-dy="${i}" data-d="${d}">${d}</button>`).join('')}</div>`:''}`).join('')}</div>
-   <button class="add" id="add">➕ 할 일 추가</button>`}
+   <div id="its">${b.items.map((it,i)=>`<div class="it ${it.sec?'sec':''}"><span class="no">${i+1}</span><button class="eb" data-em="${i}">${esc(it.e)||'＋'}</button><input class="inp" data-t="${i}" value="${esc(it.t)}" maxlength="12" placeholder="${it.sec?'시간대 (예: 아침 40분)':'할 일'}"><div class="mv"><button data-up="${i}">▲</button><button data-dn="${i}">▼</button></div><button class="del" data-del="${i}">✕</button></div>${b.wk&&!it.sec?`<div class="dys">${DAYS.map(d=>`<button class="${due(it,d)?'on':''}" data-dy="${i}" data-d="${d}">${d}</button>`).join('')}</div>`:''}`).join('')}</div>
+   <div class="row"><button class="add" id="add">➕ 할 일 추가</button><button class="add" id="adds" style="background:#f1ecff;color:#6b55b8">🕐 시간대 추가</button></div>
+   <div class="note" style="margin-top:6px">시간대를 넣으면 「아침 / 하원 후 / 저녁」처럼 칸이 나뉜 판이 돼요. ▲▼로 할 일을 시간대 아래로 옮겨요.</div>`}
   ${b.wk&&!b.blank?`<button class="btn p" id="pwk">📅 주간표 1장 인쇄</button><button class="btn p" id="pdy" style="background:#5cc6a0;box-shadow:0 3px 0 #3fa582">🗓️ 요일별 판 7장 인쇄</button><button class="btn s" id="pr">🖨️ 지금 보이는 판만 인쇄</button>`:'<button class="btn p" id="pr">🖨️ 이 판 인쇄하기</button>'}
   <div class="note" style="margin-top:6px">인쇄 창에서 <b>가로 방향</b>, 배경 그래픽 켜기를 확인해 주세요. "PDF로 저장"도 돼요.<br>코팅하면 자석이 잘 붙어요.</div>
   <div class="row" style="margin-top:10px"><button class="btn s" id="dup" style="margin:0">📄 이 판 복사</button><button class="btn d" id="dl" style="margin:0;width:auto;flex:none;padding:13px 14px">🗑️ 판 지우기</button></div>
@@ -195,6 +214,7 @@ function bind(){const b=cur();
   $$('[data-up]').forEach(x=>x.onclick=()=>{const i=+x.dataset.up;if(i>0){[b.items[i-1],b.items[i]]=[b.items[i],b.items[i-1]];render()}});
   $$('[data-dn]').forEach(x=>x.onclick=()=>{const i=+x.dataset.dn;if(i<b.items.length-1){[b.items[i+1],b.items[i]]=[b.items[i],b.items[i+1]];render()}});
   $$('[data-del]').forEach(x=>x.onclick=()=>{if(b.items.length<=1){toast('할 일이 하나는 있어야 해요');return}b.items.splice(+x.dataset.del,1);render()});
+  const as=$('#adds');if(as)as.onclick=()=>{b.items.push({e:'🕐',t:'',sec:1});render();const l=$$('[data-t]').pop();l&&l.focus()};
   const ad=$('#add');if(ad)ad.onclick=()=>{if(b.items.length>=16){toast('16개까지 넣을 수 있어요');return}b.items.push({e:'⭐',t:'',days:''});render();const l=$$('[data-t]').pop();l&&l.focus();pickEmoji(b.items.length-1)};
   $('#pr').onclick=()=>doPrintH([viewHTML(b)]);
   const pw=$('#pwk');if(pw)pw.onclick=()=>doPrintH([weekHTML(b)]);
@@ -204,7 +224,7 @@ function bind(){const b=cur();
   $$('[data-dy]').forEach(x=>x.onclick=()=>{const it=b.items[+x.dataset.dy],d=x.dataset.d;let ds=it.days||DAYS.join('');ds=ds.includes(d)?ds.replace(d,''):ds+d;ds=DAYS.filter(z=>ds.includes(z)).join('');if(!ds){toast('하루는 골라야 해요');return}it.days=ds.length===7?'':ds;render()});
   $('#dup').onclick=()=>{const c=JSON.parse(JSON.stringify(b));c.id=uid();c.title+=' (복사)';S.boards.splice(S.cur+1,0,c);S.cur++;render();toast('복사했어요')};
   const dl=$('#dl');dl.onclick=()=>{if(S.boards.length<=1){toast('판이 하나는 있어야 해요');return}if(!dl.dataset.c){dl.dataset.c=1;dl.textContent='한 번 더!';return}S.boards.splice(S.cur,1);S.cur=Math.max(0,S.cur-1);render();toast('지웠어요')};
-  $('#rs').onclick=()=>{S={boards:defaults(),cur:0,v:3};render();toast('처음 상태로 되돌렸어요')};
+  $('#rs').onclick=()=>{S={boards:defaults().concat([yuHW()]),cur:0,v:4};render();toast('처음 상태로 되돌렸어요')};
 }
 function pickEmoji(i){const b=cur();
   $('#sh').innerHTML=`<h3>그림 고르기<button class="x" id="ox">✕</button></h3>
@@ -220,7 +240,7 @@ function doPrint(list){doPrintH(list.map(viewHTML))}
 function doPrintH(hs){$('#print').innerHTML=hs.join('');document.fonts.ready.then(()=>setTimeout(()=>window.print(),150))}
 $('#pall').onclick=()=>doPrintH(S.boards.flatMap(b=>b.wk&&!b.blank?[weekHTML(b)].concat(DAYS.filter(d=>b.items.some(it=>due(it,d))).map(d=>dayBoard(b,d))):[viewHTML(b)]));
 render();document.fonts&&document.fonts.ready.then(fit);
-const APPVER='20261125c';let verBusy=false;
+const APPVER='20261125d';let verBusy=false;
 async function checkVer(){if(verBusy)return;verBusy=true;try{const r=await fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'});const t=await r.text();const m=t.match(/const APPVER='([^']+)'/);
   if(m&&m[1]!==APPVER&&!$('#ov').classList.contains('on')&&document.activeElement?.tagName!=='INPUT'){location.replace(location.pathname+'?v='+m[1])}}catch(e){}finally{verBusy=false}}
 setTimeout(checkVer,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkVer()});
