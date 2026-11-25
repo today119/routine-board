@@ -12,12 +12,12 @@ button{cursor:pointer;border:0;background:none}
 header{position:sticky;top:0;z-index:5;background:linear-gradient(#ffe8b8,#fff3da);padding:10px 14px 8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 header h1{margin:0 0 8px;font-size:22px;font-weight:400;display:flex;align-items:center;gap:8px}
 header h1 .sp{flex:1}
-.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
-.tabs button{flex:none;padding:7px 12px;border-radius:14px;background:#fff;font-size:16px;border:2px solid transparent;white-space:nowrap}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:2px}
+.tabs button{flex:none;padding:6px 10px;border-radius:14px;background:#fff;font-size:15px;border:2px solid transparent;white-space:nowrap}
 .tabs button.on{border-color:var(--tc,#f0a020);background:#fffaf0}
 .tabs .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:0}
 .wrap{max-width:1180px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:16px;align-items:start}
-@media(max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}.pvbox{position:static}}
+@media(max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}.pvbox{position:static}header{position:static}}
 .wrap>*{min-width:0}
 .panel{background:#fff;border-radius:18px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
 .lbl{font-size:15px;color:#8a8478;margin:12px 0 6px}.lbl:first-child{margin-top:0}
@@ -43,7 +43,7 @@ header h1 .sp{flex:1}
 .btn.d{background:#fdecec;color:#d65a5a;font-size:16px;padding:10px}
 .note{font-size:14px;color:#9a9488;line-height:1.5}
 .tg{display:flex;background:#f5f0e8;border-radius:14px;padding:4px}.tg button{flex:1;padding:9px 4px;border-radius:11px;font-size:16px}.tg button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-.pvbox{position:sticky;top:96px}
+.pvbox{position:sticky;top:130px}
 .pvwrap{background:#e9e2d6;border-radius:16px;padding:10px;overflow:hidden}
 .pvsc{transform-origin:0 0}
 .pvnote{text-align:center;margin-top:6px}
@@ -220,4 +220,8 @@ function doPrint(list){doPrintH(list.map(viewHTML))}
 function doPrintH(hs){$('#print').innerHTML=hs.join('');document.fonts.ready.then(()=>setTimeout(()=>window.print(),150))}
 $('#pall').onclick=()=>doPrintH(S.boards.flatMap(b=>b.wk&&!b.blank?[weekHTML(b)].concat(DAYS.filter(d=>b.items.some(it=>due(it,d))).map(d=>dayBoard(b,d))):[viewHTML(b)]));
 render();document.fonts&&document.fonts.ready.then(fit);
+const APPVER='20261125c';let verBusy=false;
+async function checkVer(){if(verBusy)return;verBusy=true;try{const r=await fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'});const t=await r.text();const m=t.match(/const APPVER='([^']+)'/);
+  if(m&&m[1]!==APPVER&&!$('#ov').classList.contains('on')&&document.activeElement?.tagName!=='INPUT'){location.replace(location.pathname+'?v='+m[1])}}catch(e){}finally{verBusy=false}}
+setTimeout(checkVer,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkVer()});
 </script></body></html>
