@@ -102,14 +102,16 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const uid=()=>Math.random().toString(36).slice(2,9);
 const KEY='routine_board_v1';
 const COLORS=[['#ffb547','#fff4dc'],['#5cc6a0','#e3f7ef'],['#ff8fab','#ffe8ef'],['#6aa8ff','#e6f0ff'],['#b59cf0','#f3eeff'],['#f08a5d','#fff0e8'],['#8cc152','#f0f8e6'],['#4fc3d9','#e4f7fa']];
-const SUNS=['☀️','🌤️','🏡','🌙','⭐','🌈','🌷','🐣','🎈','🍀'];
+const SUNS=['☀️','🌤️','🏡','🌙','✏️','📚','⭐','🌈','🌷','🐣','🎈','🍀'];
 const EMO={'아침·씻기':'⏰ 🛏️ 🚽 🫧 🧼 🚿 🛁 🪥 🧴 💇 🪮 🪞 💧 🥛','옷·준비':'👕 👚 👖 👗 🧦 👟 🧥 🧢 🎒 🏫 🚌 🚗 🎽 🩱 ☂️','먹기':'🍚 🍽️ 🥣 🍳 🍞 🍎 🍌 🥕 🥦 🍪 🥤 💊','공부·놀이':'✏️ 📖 📚 📒 📝 🧮 🔤 🎹 🎨 ⚽ 🚲 🧩 🧸 🎮 📺','정리·집안일':'🧹 🧺 🗑️ 🪴 🐶 🐱 🐟 🛋️ 🚪 👞','마음·잠':'🤗 💗 😊 🙏 🌙 😴 🛌 ⭐ 🏆 🎉 💯 ✅'};
 const D=(kid,title,sun,ci,items)=>({id:uid(),kid,title,sun,ci,blank:0,bn:8,items:items.map(([e,t])=>({e,t}))});
 const AM=[['⏰','기상'],['🛏️','이불 정리'],['🫧','씻기'],['👕','옷 입기'],['🍚','아침 식사'],['🪥','양치하기']];
 const PM=[['👟','신발 정리'],['🧼','손 발 씻기'],['🎒','가방 정리'],['👚','옷 정리'],['🧸','방 정리'],['🚿','샤워하기'],['🍽️','저녁 식사'],['🪥','양치하기'],['✏️','숙제하기'],['📖','책 읽기'],['🌙','일찍 자기']];
-function defaults(){return[D('연아','등교 전 루틴','☀️',0,AM.concat([['🏫','등교']])),D('연아','하교 후 루틴','🏡',1,PM),D('연우','등원 전 루틴','☀️',2,AM.concat([['🚌','등원']])),D('연우','하원 후 루틴','🏡',3,PM)]}
+const HW=()=>[D('연아','매일 숙제','✏️',4,[['🏫','학교 숙제'],['🧮','수학 문제집'],['🔤','영어'],['✍️','받아쓰기 연습'],['📖','책 읽기'],['📔','일기 쓰기'],['🎒','가방에 넣기']]),D('연우','매일 숙제','✏️',6,[['📝','한글'],['🔢','숫자'],['🔤','영어'],['📖','책 보기']])];
+function defaults(){return[D('연아','등교 전 루틴','☀️',0,AM.concat([['🏫','등교']])),D('연아','하교 후 루틴','🏡',1,PM),D('연우','등원 전 루틴','☀️',2,AM.concat([['🚌','등원']])),D('연우','하원 후 루틴','🏡',3,PM)].concat(HW())}
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!S||!Array.isArray(S.boards)||!S.boards.length)S={boards:defaults(),cur:0};
+if(!S||!Array.isArray(S.boards)||!S.boards.length)S={boards:defaults(),cur:0,v:2};
+if(!S.v){S.v=2;if(!S.boards.some(b=>(b.title||'').includes('숙제')))S.boards=S.boards.concat(HW())}
 const cur=()=>S.boards[Math.min(S.cur,S.boards.length-1)];
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800)}
@@ -153,7 +155,7 @@ function render(){tabs();const b=cur();
   <button class="btn p" id="pr">🖨️ 이 판 인쇄하기</button>
   <div class="note" style="margin-top:6px">인쇄 창에서 <b>가로 방향</b>, 배경 그래픽 켜기를 확인해 주세요. "PDF로 저장"도 돼요.<br>코팅하면 자석이 잘 붙어요.</div>
   <div class="row" style="margin-top:10px"><button class="btn s" id="dup" style="margin:0">📄 이 판 복사</button><button class="btn d" id="dl" style="margin:0;width:auto;flex:none;padding:13px 14px">🗑️ 판 지우기</button></div>
-  <details style="margin-top:12px"><summary class="note">처음 상태로 되돌리기</summary><button class="btn d" id="rs">↩️ 연아·연우 기본 판 4개로 되돌리기</button></details>`;
+  <details style="margin-top:12px"><summary class="note">처음 상태로 되돌리기</summary><button class="btn d" id="rs">↩️ 연아·연우 기본 판으로 되돌리기</button></details>`;
   bind();preview()}
 function bind(){const b=cur();
   $$('[data-bl]').forEach(x=>x.onclick=()=>{b.blank=+x.dataset.bl;if(b.blank&&!b.bn)b.bn=8;render()});
@@ -171,7 +173,7 @@ function bind(){const b=cur();
   $('#pr').onclick=()=>doPrint([b]);
   $('#dup').onclick=()=>{const c=JSON.parse(JSON.stringify(b));c.id=uid();c.title+=' (복사)';S.boards.splice(S.cur+1,0,c);S.cur++;render();toast('복사했어요')};
   const dl=$('#dl');dl.onclick=()=>{if(S.boards.length<=1){toast('판이 하나는 있어야 해요');return}if(!dl.dataset.c){dl.dataset.c=1;dl.textContent='한 번 더!';return}S.boards.splice(S.cur,1);S.cur=Math.max(0,S.cur-1);render();toast('지웠어요')};
-  $('#rs').onclick=()=>{S={boards:defaults(),cur:0};render();toast('처음 상태로 되돌렸어요')};
+  $('#rs').onclick=()=>{S={boards:defaults(),cur:0,v:2};render();toast('처음 상태로 되돌렸어요')};
 }
 function pickEmoji(i){const b=cur();
   $('#sh').innerHTML=`<h3>그림 고르기<button class="x" id="ox">✕</button></h3>
