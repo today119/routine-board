@@ -116,13 +116,14 @@ const D=(kid,title,sun,ci,items)=>({id:uid(),kid,title,sun,ci,blank:0,bn:8,items
 const AM=[['⏰','기상'],['🛏️','이불 정리'],['🫧','씻기'],['👕','옷 입기'],['🍚','아침 식사'],['🪥','양치하기']];
 const PM=[['👟','신발 정리'],['🧼','손 발 씻기'],['🎒','가방 정리'],['👚','옷 정리'],['🧸','방 정리'],['🚿','샤워하기'],['🍽️','저녁 식사'],['🪥','양치하기'],['✏️','숙제하기'],['📖','책 읽기'],['🌙','일찍 자기']];
 const DAYS=['월','화','수','목','금','토','일'];
-const YA_HW=[['📘','구몬',''],['📗','훈민정음','수금토일'],['📖','뿌독 1회',''],['📰','빠작 독해','수토일'],['🧮','수학 숙제',''],['📒','영어 워크북','수토일'],['📱','Quizlet',''],['💻','IXL','토일'],['📜','용선생','토일'],['🔤','초등영문법','토일'],['🧠','단어 외우기','월수금토일'],['📐','디딤돌 2장',''],['📚','원서 읽기','']];
+const YA_HW=[['📘','구몬',''],['📗','훈민정음','수금토일'],['📖','뿌독 1회',''],['📰','바빠 독해','수토일'],['🧮','수학 숙제',''],['📒','영어 워크북','수토일'],['📱','Quizlet',''],['💻','IXL','토일'],['📜','용선생','토일'],['🔤','초등영문법','토일'],['🧠','단어 외우기','월수금토일'],['📐','디딤돌 2장',''],['📚','원서 읽기','']];
 const yaHW=()=>{const b=D('연아','매일 숙제','✏️',4,YA_HW.map(([e,t])=>[e,t]));b.wk=1;b.pv='week';b.items.forEach((it,i)=>it.days=YA_HW[i][2]);return b};
 const HW=()=>[yaHW(),D('연우','매일 숙제','✏️',6,[['📝','한글'],['🔢','숫자'],['🔤','영어'],['📖','책 보기']])];
 function defaults(){return[D('연아','등교 전 루틴','☀️',0,AM.concat([['🏫','등교']])),D('연아','하교 후 루틴','🏡',1,PM),D('연우','등원 전 루틴','☀️',2,AM.concat([['🚌','등원']])),D('연우','하원 후 루틴','🏡',3,PM)].concat(HW())}
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!Array.isArray(S.boards)||!S.boards.length)S={boards:defaults(),cur:0,v:3};
 if(!S.v){S.v=2;if(!S.boards.some(b=>(b.title||'').includes('숙제')))S.boards=S.boards.concat(HW())}
+S.boards.forEach(b=>b.items.forEach(it=>{if(it.t==='빠작 독해')it.t='바빠 독해'}));
 if(S.v<3){S.v=3;const i=S.boards.findIndex(b=>b.kid==='연아'&&b.title==='매일 숙제'&&!b.wk&&b.items[0]&&b.items[0].t==='학교 숙제');if(i>=0)S.boards[i]=yaHW();else if(!S.boards.some(b=>b.wk))S.boards.push(yaHW())}
 const cur=()=>S.boards[Math.min(S.cur,S.boards.length-1)];
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
